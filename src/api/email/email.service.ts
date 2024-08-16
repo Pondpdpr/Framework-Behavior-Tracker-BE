@@ -49,9 +49,9 @@ export class EmailService {
 
     let subject = '';
     if (rule.rule === RuleType.REMINDER) {
-      subject = `แจ้งเตือน: ${user.firstName} อย่าลืมส่ง Frontline Tracker สำหรับวันที่ ${new Date(form.date).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long' })}`;
+      subject = `แจ้งเตือน: ${user.firstName} อย่าลืมส่ง Frontline Tracker สำหรับ${new Date(form.date).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long' })}`;
     } else {
-      subject = `สวัสดี ${user.firstName}! Frontline Tracker ของคุณสำหรับวันนี้พร้อมแล้ว 🙂`;
+      subject = `สวัสดี ${user.firstName}! Frontline Tracker ของคุณสำหรับ${new Date(form.date).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long' })} พร้อมแล้ว 🙂`;
     }
 
     let emailMessage = `<div><div style="white-space: pre">${rule.text}`;
@@ -113,15 +113,8 @@ export class EmailService {
       sent: false,
     }));
 
-    await this.userRepository.update(
-      {
-        isActive: true,
-      },
-      { dailyEmailActivityStatus: EmailActivityStatus.EMAIL_SENDING },
-    );
-
     const formResponses = (
-      await this.formService.findResponseOfThreeLatest()
+      await this.formService.findResponseOfThreeLatest(users ? 1 : 0)
     ).map((form) => {
       const userRespond = new Set();
       form.responses.map((response) => {
@@ -136,9 +129,12 @@ export class EmailService {
       });
     });
 
-    const todayForm = users
-      ? await this.formService.findLatest()
-      : await this.formService.create();
+    let todayForm = await this.formService.findLatest();
+
+    if (!users) {
+      await this.formService.create();
+      this.userRepository.update({}, { reminderEmailActivityStatus: null });
+    }
 
     await Promise.all(
       activeRules.map(async (rule) => {
@@ -226,13 +222,6 @@ export class EmailService {
       ? await this.userRepository.findBy({ id: In(users) })
       : await this.userRepository.findBy({ isActive: true });
 
-    await this.userRepository.update(
-      {
-        isActive: true,
-      },
-      { reminderEmailActivityStatus: EmailActivityStatus.EMAIL_SENDING },
-    );
-
     const todayForm = await this.formService.findLatest();
 
     const userResponded = todayForm.responses.map(
@@ -244,6 +233,9 @@ export class EmailService {
         .filter((user) => users || !userResponded.includes(user.id))
         .map(async (user) => {
           try {
+            await this.userRepository.update(user.id, {
+              reminderEmailActivityStatus: EmailActivityStatus.EMAIL_SENDING,
+            });
             await this.createAndSendMail(reminderRule, user, todayForm);
           } catch (e) {
             console.log(e);

@@ -16,12 +16,12 @@ export enum RuleType {
 
 export const RuleCondition = {
   'rule 1': 111,
-  'rule 2': 11,
+  'rule 2': 110,
   'rule 3': 101,
-  'rule 4': 1,
-  'rule 5': 110,
+  'rule 4': 100,
+  'rule 5': 11,
   'rule 6': 10,
-  'rule 7': 100,
+  'rule 7': 1,
   'rule 8': 0,
 };
 

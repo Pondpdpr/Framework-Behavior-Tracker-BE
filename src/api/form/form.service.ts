@@ -23,6 +23,7 @@ export class FormService {
       .createQueryBuilder('tq')
       .select(['tq.question', 'tq.behavior'])
       .where('tq.isActive = TRUE')
+      .orderBy('tq.id', 'ASC')
       .getMany();
     const form = this.formRepository.create({ questions });
     return this.formRepository.save(form);
@@ -46,11 +47,12 @@ export class FormService {
     return result[0];
   }
 
-  async findResponseOfThreeLatest() {
+  async findResponseOfThreeLatest(skip = 0) {
     const result = await this.formRepository.find({
       relations: { responses: true },
-      order: { date: 'DESC' },
+      order: { id: 'DESC' },
       take: 3,
+      skip,
     });
     return result;
   }

@@ -52,14 +52,14 @@ export class User {
   @Column({
     type: 'enum',
     enum: EmailActivityStatus,
-    default: EmailActivityStatus.EMAIL_FAILED,
+    nullable: true,
   })
   dailyEmailActivityStatus: EmailActivityStatus;
 
   @Column({
     type: 'enum',
     enum: EmailActivityStatus,
-    default: EmailActivityStatus.EMAIL_FAILED,
+    nullable: true,
   })
   reminderEmailActivityStatus: EmailActivityStatus;
 }
