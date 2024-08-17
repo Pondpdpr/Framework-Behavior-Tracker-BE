@@ -129,11 +129,13 @@ export class EmailService {
       });
     });
 
-    let todayForm = await this.formService.findLatest();
+    let todayForm: Form;
 
     if (!users) {
-      await this.formService.create();
+      todayForm = await this.formService.create();
       this.userRepository.update({}, { reminderEmailActivityStatus: null });
+    } else {
+      todayForm = await this.formService.findLatest();
     }
 
     await Promise.all(

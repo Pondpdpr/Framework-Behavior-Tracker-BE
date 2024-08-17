@@ -29,25 +29,34 @@ export class User {
   email: string;
 
   @Column({ type: 'varchar', length: 20, default: '-' })
-  title: string;
+  gender: string;
+
+  @Column({ type: 'varchar', length: 20, default: '-' })
+  group: string;
 
   @Column({ type: 'varchar', length: 30, default: '-' })
-  department: string;
+  position: string;
 
   @Column({ type: 'varchar', length: 30, default: '-' })
-  company: string;
+  directSuperior: string;
 
   @Column({ type: 'varchar', length: 50, default: '-' })
   location: string;
 
   @Column({ type: 'varchar', length: 30, default: '-' })
-  market: string;
+  dealership: string;
 
-  @OneToMany(() => Response, (response) => response.userId)
-  responses: Response[];
+  @Column({ type: 'varchar', length: 20, default: '-' })
+  phone: string;
+
+  @Column({ type: 'varchar', length: 30, default: '-' })
+  market: string;
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
+
+  @Column({ name: 'is_submitted', type: 'boolean', nullable: true })
+  isSubmitted: boolean;
 
   @Column({
     type: 'enum',
@@ -62,4 +71,7 @@ export class User {
     nullable: true,
   })
   reminderEmailActivityStatus: EmailActivityStatus;
+
+  @OneToMany(() => Response, (response) => response.userId)
+  responses: Response[];
 }

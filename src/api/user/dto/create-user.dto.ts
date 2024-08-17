@@ -5,7 +5,20 @@ export class CreateUserDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  name: string;
+  firstName: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  lastName: string;
+
+  @ApiProperty()
+  @IsString()
+  thaiFirstName?: string;
+
+  @ApiProperty()
+  @IsString()
+  thaiLastName?: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -14,26 +27,30 @@ export class CreateUserDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  title: string;
+  gender?: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  department: string;
+  group?: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  company: string;
+  position?: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  location: string;
+  directSuperior?: string;
 
   @ApiProperty()
   @IsString()
+  location?: string;
+
+  @ApiProperty()
+  @IsString()
+  dealership?: string;
+
+  @ApiProperty()
   @IsNotEmpty()
-  market: string;
+  @IsEmail(null, { message: 'Please provide valid phone number.' })
+  phone: string;
 }

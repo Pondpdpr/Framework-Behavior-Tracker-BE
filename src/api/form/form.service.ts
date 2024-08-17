@@ -26,6 +26,7 @@ export class FormService {
       .orderBy('tq.id', 'ASC')
       .getMany();
     const form = this.formRepository.create({ questions });
+    await this.userRepository.update({}, { isSubmitted: false });
     return this.formRepository.save(form);
   }
 

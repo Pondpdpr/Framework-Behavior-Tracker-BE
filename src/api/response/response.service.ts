@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { decryptToken } from 'util/encryption';
+import { User } from '../user/entities/user.entity';
 import { CreateResponseDto } from './dto/create-response.dto';
 import { Response } from './entities/response.entity';
 
@@ -10,6 +11,8 @@ export class ResponseService {
   constructor(
     @InjectRepository(Response)
     private readonly responseRepository: Repository<Response>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(token: string, createResponseDto: CreateResponseDto) {
@@ -18,6 +21,10 @@ export class ResponseService {
       ...info,
       ...createResponseDto,
     });
+    await this.userRepository.update(
+      { id: info.userId },
+      { isSubmitted: true },
+    );
     return this.responseRepository.save(response);
   }
 
