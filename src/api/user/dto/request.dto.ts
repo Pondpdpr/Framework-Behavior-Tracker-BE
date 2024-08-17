@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateUserDto {
@@ -53,4 +53,13 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsEmail(null, { message: 'Please provide valid phone number.' })
   phone: string;
+}
+
+export class UpdateUserDto extends PartialType(CreateUserDto) {}
+
+export class AdminLoginDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
 }

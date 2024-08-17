@@ -7,13 +7,20 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiOkResponse } from '@nestjs/swagger';
+import { AdminLoginDto, CreateUserDto, UpdateUserDto } from './dto/request.dto';
+import { AdminLoginResponseDto } from './dto/response.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Post('login')
+  @ApiOkResponse({ type: AdminLoginResponseDto })
+  login(@Body() data: AdminLoginDto) {
+    return { isValid: data.password === process.env.ADMIN_PASSWORD };
+  }
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
