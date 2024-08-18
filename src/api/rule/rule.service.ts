@@ -17,7 +17,9 @@ export class RuleService {
   }
 
   async findAll(query: RuleQueryDto) {
-    const qb = this.ruleRepository.createQueryBuilder('r');
+    const qb = this.ruleRepository
+      .createQueryBuilder('r')
+      .orderBy('rule', 'ASC');
 
     if (query?.isReminder === 'true') {
       qb.where('r.rule = :ruleType', { ruleType: RuleType.REMINDER });
