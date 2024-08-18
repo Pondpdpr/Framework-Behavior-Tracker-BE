@@ -1,0 +1,40 @@
+# Use postgres/example user/password credentials
+version: '3.9'
+
+services:
+
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=root
+      - POSTGRES_DB=datawow
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    container_name: nest-docker-postgres
+    environment:
+      - PORT=${PORT}
+      - DB_HOST=db
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - TOKEN_KEY=${TOKEN_KEY}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_USERNAME=${EMAIL_USERNAME}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - FRONTEND_HOST=${FRONTEND_HOST}
+    ports:
+      - '3001:3001'
+    depends_on:
+      - db
+    volumes:
+      - ./src:/app/src
