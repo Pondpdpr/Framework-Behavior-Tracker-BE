@@ -54,14 +54,17 @@ export class EmailService {
       subject = `สวัสดี ${user.firstName}! Frontline Tracker ของคุณสำหรับ${new Date(form.date).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long' })} พร้อมแล้ว 🙂`;
     }
 
-    let emailMessage = `<div><div style="white-space: pre">${rule.text}`;
+    let emailMessage = `<div><div style="white-space: pre; text-size: 1.5rem">${rule.text}`;
     const token = encryptToken({ userId: user.id, formId: form.id });
 
     if (toAllRule.isActive && rule.rule !== RuleType.REMINDER)
       emailMessage += `\n\n${toAllRule.text}`;
-    emailMessage += `\n\n${process.env.FRONTEND_HOST}/user/${token}`;
+    emailMessage += `\n\n<a href=${process.env.FRONTEND_HOST}user/${token}>Frontline Tracker</a>`;
     emailMessage = this.injectMessage(emailMessage, user);
-    emailMessage += `\n\nทีมงาน Frontline Tracker\n\n</div><img src="https://behavior-tracker-prach.s3.ap-southeast-1.amazonaws.com/logo.png" alt="Framework logo" height="auto" width="150px"/></div>`;
+    emailMessage += `\n\nทีมงาน Frontline Tracker\n\n</div><img src="https://behavior-tracker-prach.s3.ap-southeast-1.amazonaws.com/logo.png" alt="Framework logo" height="auto" width="150px"/>
+    <a href=${process.env.FRONTEND_HOST}faq>\nคำถามที่พบบ่อย</a>
+    <a href=${process.env.CONTACT_LINK}>\nติดต่อสอบถาม</a>
+    </div>`;
 
     try {
       this.sendMail(emailMessage, user, subject);
