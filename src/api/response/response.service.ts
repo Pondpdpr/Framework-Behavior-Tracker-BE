@@ -17,16 +17,21 @@ export class ResponseService {
 
   async create(token: string, createResponseDto: CreateResponseDto) {
     const info = decryptToken(token);
-    const existingResponse = await this.responseRepository.findOneBy({
-      userId: info.userId,
-      formId: info.formId,
+    const existingResponse = await this.responseRepository.findOne({
+      relations: { answers: true },
+      where: {
+        userId: info.userId,
+        formId: info.formId,
+      },
     });
 
     if (existingResponse) {
-      return await this.responseRepository.update(
-        existingResponse,
-        createResponseDto,
-      );
+      createResponseDto.answers.map((answer) => {
+        existingResponse.answers.find(
+          (existingAnswer) => existingAnswer.questionId === answer.questionId,
+        ).answer = answer.answer;
+      });
+      return await this.responseRepository.save(existingResponse);
     }
 
     const response: Response = this.responseRepository.create({
