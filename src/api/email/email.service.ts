@@ -25,7 +25,7 @@ export class EmailService {
         from: 'tracker@frameworks-group.com',
         to: user.email,
         subject,
-        html: message,
+        html: `<div style="padding: 24px">${message}</div>`,
       });
     } catch (e) {
       console.log(e);
@@ -54,7 +54,7 @@ export class EmailService {
       subject = `สวัสดี ${user.firstName}! Frontline Tracker ของคุณสำหรับ${new Date(form.date).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long' })} พร้อมแล้ว 🙂`;
     }
 
-    let emailMessage = `<div><div style="white-space: pre; text-size: 1.5rem">${rule.text}`;
+    let emailMessage = `<div style="font-size: 1rem"><div style="white-space: pre-wrap">${rule.text}`;
     const token = encryptToken({ userId: user.id, formId: form.id });
 
     if (toAllRule.isActive && rule.rule !== RuleType.REMINDER)
@@ -62,8 +62,10 @@ export class EmailService {
     emailMessage += `\n\n<a href=${process.env.FRONTEND_HOST}user/${token}>Frontline Tracker</a>`;
     emailMessage = this.injectMessage(emailMessage, user);
     emailMessage += `\n\nทีมงาน Frontline Tracker\n\n</div><img src="https://behavior-tracker-prach.s3.ap-southeast-1.amazonaws.com/logo.png" alt="Framework logo" height="auto" width="150px"/>
-    <a href=${process.env.FRONTEND_HOST}faq>\nคำถามที่พบบ่อย</a>
-    <a href=${process.env.CONTACT_LINK}>\nติดต่อสอบถาม</a>
+    <div style="white-space: pre-wrap">
+หากมีข้อสงสัยหรือต้องการความช่วยเหลือ หาคำตอบได้ที่นี่:
+<a href=${process.env.FRONTEND_HOST}faq>คำถามที่พบบ่อย</a>
+<a href=${process.env.CONTACT_LINK}>ติดต่อสอบถาม</a>
     </div>`;
 
     try {
