@@ -69,6 +69,7 @@ export class FormService {
         .clone()
         .leftJoinAndSelect('f.questions', 'q')
         .orderBy('f.id', 'DESC')
+        .addOrderBy('q.id', 'ASC')
         .getOne();
       if (latestForm.id !== info.formId) {
         throw new BadRequestException('form has Expired');

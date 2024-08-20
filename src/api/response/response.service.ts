@@ -17,6 +17,18 @@ export class ResponseService {
 
   async create(token: string, createResponseDto: CreateResponseDto) {
     const info = decryptToken(token);
+    const existingResponse = await this.responseRepository.findOneBy({
+      userId: info.userId,
+      formId: info.formId,
+    });
+
+    if (existingResponse) {
+      return await this.responseRepository.update(
+        existingResponse,
+        createResponseDto,
+      );
+    }
+
     const response: Response = this.responseRepository.create({
       ...info,
       ...createResponseDto,
