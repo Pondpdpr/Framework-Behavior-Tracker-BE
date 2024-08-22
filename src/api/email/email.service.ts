@@ -25,7 +25,7 @@ export class EmailService {
         from: 'tracker@frameworks-group.com',
         to: user.email,
         subject,
-        html: `<div style="padding: 24px">${message}</div>`,
+        html: `<div>${message}</div>`,
       });
     } catch (e) {
       console.log(e);
@@ -51,7 +51,7 @@ export class EmailService {
     if (rule.rule === RuleType.REMINDER) {
       subject = `แจ้งเตือน: ${user.firstName} อย่าลืมส่ง Frontline Tracker สำหรับ${new Date(form.date).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long' })}`;
     } else {
-      subject = `สวัสดี ${user.firstName}! Frontline Tracker ของคุณสำหรับ${new Date(form.date).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long' })} พร้อมแล้ว 🙂`;
+      subject = `สวัสดี ${user.firstName}! Frontline Tracker สำหรับ${new Date(form.date).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long' })} พร้อมแล้ว 🙂`;
     }
 
     let emailMessage = `<div style="font-size: 1rem"><div style="white-space: pre-wrap">${rule.text}`;
@@ -61,9 +61,9 @@ export class EmailService {
       emailMessage += `\n\n${toAllRule.text}`;
     emailMessage += `\n\n<a href=${process.env.FRONTEND_HOST}user/${token}>Frontline Tracker</a>`;
     emailMessage = this.injectMessage(emailMessage, user);
-    emailMessage += `\n\nทีมงาน Frontline Tracker\n\n</div><img src="https://behavior-tracker-prach.s3.ap-southeast-1.amazonaws.com/logo.png" alt="Framework logo" height="auto" width="150px"/>
+    emailMessage += `\n\n\n\n\nทีมงาน Frontline Tracker\n\n</div><img src="https://behavior-tracker-prach.s3.ap-southeast-1.amazonaws.com/logo.png" alt="Framework logo" height="auto" width="150px"/>
     <div style="white-space: pre-wrap">
-หากมีข้อสงสัยหรือต้องการความช่วยเหลือ หาคำตอบได้ที่นี่:
+หากมีข้อสงสัยหรือต้องการความช่วยเหลือ หาคำตอบได้ที่:
 <a href=${process.env.FRONTEND_HOST}faq>คำถามที่พบบ่อย</a>
 <a href=${process.env.CONTACT_LINK}>ติดต่อสอบถาม</a>
     </div>`;
