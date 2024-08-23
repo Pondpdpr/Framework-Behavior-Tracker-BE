@@ -49,9 +49,9 @@ export class EmailService {
 
     let subject = '';
     if (rule.rule === RuleType.REMINDER) {
-      subject = `แจ้งเตือน: ${user.firstName} อย่าลืมส่ง Frontline Tracker สำหรับ${new Date(form.date).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long' })}`;
+      subject = `แจ้งเตือน: ${user.thaiFirstName || user.firstName} อย่าลืมส่ง Frontline Tracker สำหรับ${new Date(form.date).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long' })}`;
     } else {
-      subject = `สวัสดี ${user.firstName}! Frontline Tracker สำหรับ${new Date(form.date).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long' })} พร้อมแล้ว 🙂`;
+      subject = `สวัสดี ${user.thaiFirstName || user.firstName}! Frontline Tracker สำหรับ${new Date(form.date).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long' })} พร้อมแล้ว 🙂`;
     }
 
     let emailMessage = `<div style="font-size: 1rem"><div style="white-space: pre-wrap">${rule.text}`;
