@@ -4,6 +4,8 @@ import { AnswerService } from './answer/answer.service';
 import { Answer } from './answer/entities/answer.entity';
 import { EmailController } from './email/email.controller';
 import { EmailService } from './email/email.service';
+import { ExportController } from './export/export.controller';
+import { ExportService } from './export/export.service';
 import { Form } from './form/entities/form.entity';
 import { FormController } from './form/form.controller';
 import { FormService } from './form/form.service';
@@ -41,6 +43,7 @@ import { UserService } from './user/user.service';
     TemplateQuestionController,
     RuleController,
     EmailController,
+    ExportController,
   ],
   providers: [
     UserService,
@@ -51,6 +54,7 @@ import { UserService } from './user/user.service';
     TemplateQuestionService,
     RuleService,
     EmailService,
+    ExportService,
   ],
 })
 export class ApiModule {}
