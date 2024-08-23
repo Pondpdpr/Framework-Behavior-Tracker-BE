@@ -25,6 +25,7 @@ export enum BehaviorType {
   EYE_CONTACT = 'B3',
   TONE_OF_VOICE = 'B4',
   ACTIVE_MINDFUL_LISTENING = 'B5',
+  TESTING = 'X',
 }
 
 @Entity()
