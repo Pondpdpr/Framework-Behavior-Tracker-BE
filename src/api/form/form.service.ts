@@ -42,7 +42,7 @@ export class FormService {
   async findLatest() {
     const result = await this.formRepository.find({
       relations: { responses: true },
-      order: { date: 'DESC' },
+      order: { id: 'DESC' },
       take: 1,
     });
     return result[0];

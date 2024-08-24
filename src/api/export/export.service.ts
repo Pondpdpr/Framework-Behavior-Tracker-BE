@@ -65,7 +65,8 @@ export class ExportService {
     const worksheet = workbook.addWorksheet('UserReport');
 
     worksheet.columns = [
-      { header: 'Timestamp', key: 'created_at' },
+      { header: 'Date', key: 'date' },
+      { header: 'Time', key: 'time' },
       { header: 'First name', key: 'firstName' },
       { header: 'Last name', key: 'lastName' },
       { header: 'Thai first name', key: 'thaiFirstName' },
@@ -94,6 +95,7 @@ export class ExportService {
       { header: 'Eye Contact', key: 'B3' },
       { header: 'Tone Of Voice', key: 'B4' },
       { header: 'Active/Mindful Listening', key: 'B5' },
+      { header: 'Testing', key: 'X' },
     ];
 
     const responses = await this.responseRepository.find({
@@ -111,7 +113,14 @@ export class ExportService {
         created_at.getMinutes() + created_at.getTimezoneOffset() * -1,
       );
       created_at.setHours(created_at.getHours() + 7);
-      const data = { ...allResponse, ...user, created_at, ...answerData };
+      const dateData = created_at.toISOString().split('T');
+      const data = {
+        ...allResponse,
+        ...user,
+        date: dateData[0],
+        time: dateData[1],
+        ...answerData,
+      };
       worksheet.addRow(data);
     });
 
