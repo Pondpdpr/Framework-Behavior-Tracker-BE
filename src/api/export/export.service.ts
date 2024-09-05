@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as ExcelJS from 'exceljs';
 import { Repository } from 'typeorm';
+import { Form } from '../form/entities/form.entity';
 import { Response } from '../response/entities/response.entity';
 import { User } from '../user/entities/user.entity';
 
@@ -21,6 +22,7 @@ const allResponse = {
   B3: 'X',
   B4: 'X',
   B5: 'X',
+  X: 'X',
 };
 
 @Injectable()
@@ -28,6 +30,8 @@ export class ExportService {
   constructor(
     @InjectRepository(Response)
     private readonly responseRepository: Repository<Response>,
+    @InjectRepository(Form)
+    private readonly formRepository: Repository<Form>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
@@ -60,6 +64,7 @@ export class ExportService {
 
     return await workbook.xlsx.writeBuffer();
   }
+
   async exportResponseXLS() {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('UserReport');
@@ -123,6 +128,45 @@ export class ExportService {
       };
       worksheet.addRow(data);
     });
+
+    return await workbook.xlsx.writeBuffer();
+  }
+
+  async exportResponseCheckBoxXLS() {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('UserReport');
+
+    const forms = await this.formRepository.find({
+      order: { id: 'ASC' },
+      relations: { responses: true },
+    });
+    const users = await this.userRepository.find({
+      order: { id: 'ASC' },
+      select: { id: true, firstName: true, lastName: true },
+    });
+
+    let columns = [
+      { header: 'ID', key: 'id' },
+      { header: 'Name', key: 'fullName' },
+    ];
+
+    forms.forEach((form) => {
+      users.forEach((user) => {
+        user[`${form.id}-key`] = 0;
+        user['fullName'] = `${user.firstName} ${user.lastName}`;
+      });
+    });
+
+    forms.forEach((form) => {
+      columns.push({ header: `${form.date}`, key: `${form.id}-key` });
+      form.responses.map((response) => {
+        users.find((user) => user.id === response.userId)[`${form.id}-key`] = 1;
+      });
+    });
+
+    worksheet.columns = columns;
+
+    users.map((user) => worksheet.addRow(user));
 
     return await workbook.xlsx.writeBuffer();
   }

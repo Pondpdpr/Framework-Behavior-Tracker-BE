@@ -34,4 +34,18 @@ export class ExportController {
     );
     res.send(buffer);
   }
+
+  @Get('response-checkbox')
+  @ApiOkResponse()
+  async getResponseCheckBoxExcel(@Res() res: Response) {
+    const buffer = await this.exportService.exportResponseCheckBoxXLS();
+    res.header(
+      'Content-Disposition',
+      `attachment; filename=responsecheckbox${new Date().valueOf()}.xlsx`,
+    );
+    res.type(
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.send(buffer);
+  }
 }
