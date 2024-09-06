@@ -43,7 +43,7 @@ export class User {
   @Column({ type: 'varchar', length: 50, default: '-' })
   location: string;
 
-  @Column({ type: 'varchar', length: 30, default: '-' })
+  @Column({ type: 'varchar', length: 100, default: '-' })
   dealership: string;
 
   @Column({ type: 'varchar', length: 20, default: '-' })
