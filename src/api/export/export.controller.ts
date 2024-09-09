@@ -21,6 +21,20 @@ export class ExportController {
     res.send(buffer);
   }
 
+  @Get('latest-form-response')
+  @ApiOkResponse()
+  async getLastestResponseExcel(@Res() res: Response) {
+    const buffer = await this.exportService.exportLatestResponseXLS();
+    res.header(
+      'Content-Disposition',
+      `attachment; filename=latestresponse${new Date().valueOf()}.xlsx`,
+    );
+    res.type(
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.send(buffer);
+  }
+
   @Get('response')
   @ApiOkResponse()
   async getResponseExcel(@Res() res: Response) {

@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as ExcelJS from 'exceljs';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { Form } from '../form/entities/form.entity';
+import { FormService } from '../form/form.service';
 import { Response } from '../response/entities/response.entity';
 import { User } from '../user/entities/user.entity';
 
@@ -34,6 +35,7 @@ export class ExportService {
     private readonly formRepository: Repository<Form>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly formService: FormService,
   ) {}
 
   async exportUserXLS() {
@@ -72,6 +74,7 @@ export class ExportService {
     worksheet.columns = [
       { header: 'Date', key: 'date' },
       { header: 'Time', key: 'time' },
+      { header: 'ID', key: 'userId' },
       { header: 'First name', key: 'firstName' },
       { header: 'Last name', key: 'lastName' },
       { header: 'Thai first name', key: 'thaiFirstName' },
@@ -122,6 +125,79 @@ export class ExportService {
       const data = {
         ...allResponse,
         ...user,
+        userId: user.id,
+        date: dateData[0],
+        time: dateData[1],
+        ...answerData,
+      };
+      worksheet.addRow(data);
+    });
+
+    return await workbook.xlsx.writeBuffer();
+  }
+
+  async exportLatestResponseXLS() {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('UserReport');
+
+    worksheet.columns = [
+      { header: 'Date', key: 'date' },
+      { header: 'Time', key: 'time' },
+      { header: 'ID', key: 'userId' },
+      { header: 'First name', key: 'firstName' },
+      { header: 'Last name', key: 'lastName' },
+      { header: 'Thai first name', key: 'thaiFirstName' },
+      { header: 'Thai last name', key: 'thaiLastName' },
+      { header: 'Email', key: 'email' },
+      { header: 'Position', key: 'position' },
+      { header: 'Group', key: 'group' },
+      { header: 'Direct superior', key: 'directSuperior' },
+      { header: 'Location', key: 'location' },
+      { header: 'Dealership', key: 'dealership' },
+      { header: 'Phone', key: 'phone' },
+      { header: 'Market', key: 'market' },
+      { header: 'Active', key: 'isActive' },
+      { header: 'Sales Lead Management', key: 'P1' },
+      { header: 'Customer Logging', key: 'P2' },
+      { header: 'STS/Sales Funnel Management', key: 'P3' },
+      { header: 'Sales Meeting Optimisation', key: 'P4' },
+      { header: 'Time Management', key: 'P5' },
+      { header: 'Sales Presentation', key: 'S1' },
+      { header: 'Closing Techniques', key: 'S2' },
+      { header: 'Customer Follow-Ups', key: 'S3' },
+      { header: 'Objection Handling', key: 'S4' },
+      { header: 'Using Scripts', key: 'S5' },
+      { header: `Customer's Name x5`, key: 'B1' },
+      { header: 'Gestures', key: 'B2' },
+      { header: 'Eye Contact', key: 'B3' },
+      { header: 'Tone Of Voice', key: 'B4' },
+      { header: 'Active/Mindful Listening', key: 'B5' },
+      { header: 'Testing', key: 'X' },
+    ];
+
+    const latestForm = await this.formService.findLatest();
+
+    const responses = await this.responseRepository.find({
+      relations: { user: true, answers: { question: true } },
+      where: { formId: Equal(latestForm.id) },
+      order: { created_at: 'ASC' },
+    });
+
+    responses.map((response) => {
+      const { user, answers, created_at } = response;
+      const answerData = {};
+      answers.map(
+        (answer) => (answerData[answer.question.behavior] = answer.answer),
+      );
+      created_at.setMinutes(
+        created_at.getMinutes() + created_at.getTimezoneOffset() * -1,
+      );
+      created_at.setHours(created_at.getHours() + 7);
+      const dateData = created_at.toISOString().split('T');
+      const data = {
+        ...allResponse,
+        ...user,
+        userId: user.id,
         date: dateData[0],
         time: dateData[1],
         ...answerData,
