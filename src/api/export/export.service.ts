@@ -142,7 +142,12 @@ export class ExportService {
     });
     const users = await this.userRepository.find({
       order: { id: 'ASC' },
-      select: { id: true, firstName: true, lastName: true },
+      select: {
+        id: true,
+        thaiFirstName: true,
+        thaiLastName: true,
+        dealership: true,
+      },
     });
 
     let columns = [
