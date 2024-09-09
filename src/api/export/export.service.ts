@@ -148,12 +148,13 @@ export class ExportService {
     let columns = [
       { header: 'ID', key: 'id' },
       { header: 'Name', key: 'fullName' },
+      { header: 'Dealership', key: 'dealership' },
     ];
 
     forms.forEach((form) => {
       users.forEach((user) => {
         user[`${form.id}-key`] = 0;
-        user['fullName'] = `${user.firstName} ${user.lastName}`;
+        user['fullName'] = `${user.thaiFirstName} ${user.thaiLastName}`;
       });
     });
 
